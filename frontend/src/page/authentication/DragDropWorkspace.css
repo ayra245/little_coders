@@ -1,0 +1,52 @@
+.main-layout {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .elements-palette,
+  .workspace,
+  .source-code {
+    flex: 1;
+    border: 1px solid #ccc;
+    padding: 15px;
+    min-height: 300px;
+    border-radius: 8px;
+    background: #f9f9f9;
+  }
+  
+  .draggable-element {
+    background: #d1e7ff;
+    margin: 5px 0;
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: grab;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .workspace-element {
+    background: #ffe8cc;
+    margin: 8px 0;
+    padding: 8px;
+    border-radius: 4px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .workspace-element input {
+    padding: 4px;
+    border-radius: 4px;
+    border: 1px solid #aaa;
+    width: 80px;
+  }
+  
+  .source-code pre {
+    background: #2e2e2e;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+  }
+  
