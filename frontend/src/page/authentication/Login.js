@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -36,8 +36,17 @@ function Login() {
 
       if (res.ok) {
         setMessage("Logged in successfully!");
+
+        // Save token + role in localStorage (optional)
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.role);
+
         setTimeout(() => {
-          navigate("/dashboard"); // Redirect to Dashboard.js
+          if (data.role === "admin") {
+            navigate("/admin/dashboard");
+          } else {
+            navigate("/user/dashboard");
+          }
         }, 1000);
       } else {
         setMessage(data.message || "Login failed!");
@@ -77,7 +86,18 @@ function Login() {
 
           <button type="submit" className="auth-btn">Login</button>
         </form>
+
         {message && <p className="auth-message">{message}</p>}
+
+        {/* 🔽 Added Register & Forgot Password options */}
+        <div className="auth-footer">
+          <p>
+            Don’t have an account? <Link to="/register">Register</Link>
+          </p>
+          <p>
+            <Link to="/forgot-password">Forgot Password?</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

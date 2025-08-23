@@ -13,12 +13,24 @@ app.use(cors());
 
 // Default route (works in browser GET request)
 app.get("/", (req, res) => {
-  res.send("Auth API is running!");
+  res.send("🚀 Auth API with RBAC is running!");
 });
 
 // Auth routes
 const authRoutes = require("./src/route/authRoute");
 app.use("/api/auth", authRoutes);
+
+// (Optional) Test protected routes
+const auth = require("./src/middleware/auth");
+const verifyRole = require("./src/middleware/role");
+
+app.get("/api/user/profile", auth, (req, res) => {
+  res.json({ message: "This is your profile", user: req.user });
+});
+
+app.get("/api/admin/dashboard", auth, verifyRole(["admin"]), (req, res) => {
+  res.json({ message: "Welcome to the Admin Dashboard" });
+});
 
 // MongoDB connection
 mongoose
@@ -26,7 +38,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("✅ MongoDB connected"))
+  .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB error:", err));
 
 const PORT = process.env.PORT || 5000;

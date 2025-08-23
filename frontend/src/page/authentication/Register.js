@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Register() {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
+    role: "user", // default role
   });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -85,9 +86,23 @@ function Register() {
             required
           />
 
+          {/* New Role Selection */}
+          <label>Role</label>
+          <select name="role" value={formData.role} onChange={handleChange}>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+
           <button type="submit" className="auth-btn">Register</button>
         </form>
         {message && <p className="auth-message">{message}</p>}
+
+        {/* 🔽 Added Login & Forgot Password options */}
+        <div className="auth-footer">
+          <p>
+            Already have an account? <Link to="/login">Login</Link>
+          </p>
+        </div>
       </div>
     </div>
   );
