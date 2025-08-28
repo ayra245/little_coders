@@ -22,9 +22,9 @@ function AdminDashboard() {
           Admin Controls
         </h3>
         <ul style={{ textAlign: "left", fontSize: "12px", lineHeight: "1.8" }}>
-          <li>👥 Manage Users</li>
-          <li>📊 View Reports</li>
-          <li>⚙️ System Settings</li>
+          <li>Manage Users</li>
+          <li>View Reports</li>
+          <li>System Settings</li>
         </ul>
       </div>
     </div>

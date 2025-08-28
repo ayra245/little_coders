@@ -6,7 +6,7 @@ function UserDashboard() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h1>📌 User Dashboard</h1>
+      <h1>User Dashboard</h1>
       <p>Welcome, {user?.username || "User"}!</p>
       <p>Your role: {user?.role}</p>
       <hr />

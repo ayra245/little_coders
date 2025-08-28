@@ -1,14 +1,11 @@
-// controller/authController.js
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../model/User");
 
-// REGISTER
 exports.register = async (req, res) => {
   try {
     const { username, email, password, role } = req.body;
 
-    // Prevent anyone from setting custom roles except admin/user
     if (!["user", "admin"].includes(role)) {
       return res.status(400).json({ message: "Invalid role" });
     }
@@ -19,7 +16,7 @@ exports.register = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      role, // save role
+      role,
     });
 
     await user.save();
@@ -29,7 +26,6 @@ exports.register = async (req, res) => {
   }
 };
 
-// LOGIN
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -40,7 +36,6 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
-    // Include role in token
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,
@@ -53,7 +48,7 @@ exports.login = async (req, res) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        role: user.role, // return role to frontend
+        role: user.role, 
       },
     });
   } catch (err) {

@@ -2,22 +2,19 @@
     font-family: "Press Start 2P", system-ui, sans-serif !important;
   }
   
-/* Global font */
 .auth-container {
     font-family: "Press Start 2P", system-ui, sans-serif;
     letter-spacing: 0.5px;
   }
   
-  /* Background + layout */
   .auth-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #fffdd0; /* light yellow */
+    background-color: #fffdd0; 
   }
   
-  /* Card */
   .auth-box {
     background-color: #fff6f6;
     border: 2px solid #b57edc;
@@ -27,7 +24,6 @@
     width: 380px;
   }
   
-  /* Logo */
   .auth-logo {
     width: 80px;
     height: 80px;
@@ -35,14 +31,12 @@
     margin-bottom: 16px;
   }
   
-  /* Titles */
   .auth-box h2 {
-    font-size: 14px;      /* Press Start 2P is dense */
-    color: #2e7d32;       /* green */
+    font-size: 14px;      
+    color: #2e7d32;       
     margin-bottom: 22px;
   }
   
-  /* Labels */
   .auth-form label {
     display: block;
     text-align: left;
@@ -51,7 +45,6 @@
     margin: 10px 0 4px;
   }
   
-  /* Inputs (retro underline) */
   .auth-form input {
     width: 100%;
     padding: 10px 6px 8px;
@@ -63,7 +56,6 @@
     font-size: 12px;
   }
   
-  /* Button */
   .auth-btn {
     width: 100%;
     padding: 14px 10px;
@@ -78,7 +70,6 @@
   
   .auth-btn:hover { filter: brightness(0.95); }
   
-  /* Footer + message */
   .auth-footer { margin-top: 16px; font-size: 10px; }
   .auth-footer a { color: #2e7d32; text-decoration: none; }
   .auth-footer a:hover { text-decoration: underline; }

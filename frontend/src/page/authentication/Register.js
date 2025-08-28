@@ -6,7 +6,7 @@ function Register() {
     username: "",
     email: "",
     password: "",
-    role: "user", // default role
+    role: "user", 
   });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ function Register() {
       if (res.ok) {
         setMessage("Registered successfully!");
         setTimeout(() => {
-          navigate("/login"); // Redirect to Login after register
+          navigate("/login"); 
         }, 1000);
       } else {
         setMessage(data.message || "Registration failed!");
@@ -86,7 +86,6 @@ function Register() {
             required
           />
 
-          {/* New Role Selection */}
           <label>Role</label>
           <select name="role" value={formData.role} onChange={handleChange}>
             <option value="user">User</option>
@@ -97,7 +96,6 @@ function Register() {
         </form>
         {message && <p className="auth-message">{message}</p>}
 
-        {/* 🔽 Added Login & Forgot Password options */}
         <div className="auth-footer">
           <p>
             Already have an account? <Link to="/login">Login</Link>

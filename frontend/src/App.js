@@ -1,24 +1,20 @@
 import React, { useContext } from "react";
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
 
 import Register from "./page/authentication/Register";
 import Login from "./page/authentication/Login";
 import Try from "./page/authentication/Try";
 
-// Role-based pages
 import UserDashboard from "./page/user/Dashboard";
 import AdminDashboard from "./page/admin/Dashboard";
 import Profile from "./page/user/Profile";
 
-// Middleware
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthContext } from "./context/AuthContext";
 
-// Navbar as separate component
 function Navbar({ logout }) {
   const location = useLocation();
 
-  // Hide navbar on Register & Login
   if (location.pathname === "/register" || location.pathname === "/login") {
     return null;
   }
@@ -43,16 +39,15 @@ function App() {
 
   return (
     <Router>
-      {/* Navbar is conditionally rendered */}
       <Navbar logout={logout} />
 
       <Routes>
-        {/* Public routes */}
+        <Route path="/" element={<Navigate to="/login" />} />
+
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/try" element={<Try />} />
 
-        {/* Protected routes */}
         <Route
           path="/user/dashboard"
           element={

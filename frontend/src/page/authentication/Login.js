@@ -37,7 +37,6 @@ function Login() {
       if (res.ok) {
         setMessage("Logged in successfully!");
 
-        // Save token + role in localStorage (optional)
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", data.role);
 
@@ -89,7 +88,6 @@ function Login() {
 
         {message && <p className="auth-message">{message}</p>}
 
-        {/* 🔽 Added Register & Forgot Password options */}
         <div className="auth-footer">
           <p>
             Don’t have an account? <Link to="/register">Register</Link>
