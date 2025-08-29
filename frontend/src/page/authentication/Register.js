@@ -6,7 +6,7 @@ function Register() {
     username: "",
     email: "",
     password: "",
-    role: "user", 
+    role: "user", // 
   });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -32,14 +32,14 @@ function Register() {
       const res = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData), 
       });
       const data = await res.json();
 
       if (res.ok) {
         setMessage("Registered successfully!");
         setTimeout(() => {
-          navigate("/login"); 
+          navigate("/login");
         }, 1000);
       } else {
         setMessage(data.message || "Registration failed!");
@@ -85,12 +85,6 @@ function Register() {
             onChange={handleChange}
             required
           />
-
-          <label>Role</label>
-          <select name="role" value={formData.role} onChange={handleChange}>
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
 
           <button type="submit" className="auth-btn">Register</button>
         </form>
