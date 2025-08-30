@@ -35,7 +35,7 @@ function ForgotPassword() {
         setMessage("Password updated successfully! Redirecting to login...");
         setTimeout(() => {
           navigate("/login");
-        }, 2000); // 2 seconds delay
+        }, 2000); 
       } else {
         setMessage(data.message || "Something went wrong!");
       }

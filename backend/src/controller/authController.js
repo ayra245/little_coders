@@ -56,7 +56,6 @@ exports.login = async (req, res) => {
   }
 };
 
-// 🔹 Simple forgot password (no email) — change password directly by email
 exports.simpleForgotPassword = async (req, res) => {
   try {
     const { email, newPassword } = req.body;

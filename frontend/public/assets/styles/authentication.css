@@ -72,7 +72,7 @@ html, body {
   border-radius: 20px;
   cursor: pointer;
   transition: filter .2s ease;
-  font-family: "Press Start 2P", system-ui, sans-serif !important; /* Added */
+  font-family: "Press Start 2P", system-ui, sans-serif !important; 
 }
 
 .auth-btn:hover {
@@ -87,7 +87,7 @@ html, body {
 .auth-footer a { 
   color: #2e7d32; 
   text-decoration: none; 
-  font-family: "Press Start 2P", system-ui, sans-serif !important; /* Added */
+  font-family: "Press Start 2P", system-ui, sans-serif !important;
 }
 
 .auth-footer a:hover { 

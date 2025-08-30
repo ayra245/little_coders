@@ -4,14 +4,14 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } f
 import Register from "./page/authentication/Register";
 import Login from "./page/authentication/Login";
 import Try from "./page/authentication/Try";
-import ForgotPassword from "./page/authentication/ForgotPassword"; // <-- Add this
+import ForgotPassword from "./page/authentication/ForgotPassword"; 
 
 import UserDashboard from "./page/user/Dashboard";
 import AdminDashboard from "./page/admin/Dashboard";
 import Profile from "./page/user/Profile";
 
-import ProtectedRoute from "./components/ProtectedRoute"; // <-- check the name (it was cut off in your snippet)
-import { AuthContext } from "./context/AuthContext"; // <-- Make sure you have this
+import ProtectedRoute from "./components/ProtectedRoute"; 
+import { AuthContext } from "./context/AuthContext"; 
 
 function Navbar({ logout }) {
   const location = useLocation();
