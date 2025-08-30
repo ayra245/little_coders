@@ -72,7 +72,9 @@ html, body {
   border-radius: 20px;
   cursor: pointer;
   transition: filter .2s ease;
+  font-family: "Press Start 2P", system-ui, sans-serif !important; /* Added */
 }
+
 .auth-btn:hover {
   filter: brightness(0.95);
 }
@@ -81,10 +83,13 @@ html, body {
   margin-top: 20px; 
   font-size: 10px; 
 }
+
 .auth-footer a { 
   color: #2e7d32; 
   text-decoration: none; 
+  font-family: "Press Start 2P", system-ui, sans-serif !important; /* Added */
 }
+
 .auth-footer a:hover { 
   text-decoration: underline; 
 }

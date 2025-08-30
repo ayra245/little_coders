@@ -4,18 +4,19 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } f
 import Register from "./page/authentication/Register";
 import Login from "./page/authentication/Login";
 import Try from "./page/authentication/Try";
+import ForgotPassword from "./page/authentication/ForgotPassword"; // <-- Add this
 
 import UserDashboard from "./page/user/Dashboard";
 import AdminDashboard from "./page/admin/Dashboard";
 import Profile from "./page/user/Profile";
 
-import ProtectedRoute from "./components/ProtectedRoute";
-import { AuthContext } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute"; // <-- check the name (it was cut off in your snippet)
+import { AuthContext } from "./context/AuthContext"; // <-- Make sure you have this
 
 function Navbar({ logout }) {
   const location = useLocation();
 
-  if (location.pathname === "/register" || location.pathname === "/login") {
+  if (location.pathname === "/register" || location.pathname === "/login" || location.pathname === "/forgot-password") {
     return null;
   }
 
@@ -46,6 +47,7 @@ function App() {
 
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/try" element={<Try />} />
 
         <Route

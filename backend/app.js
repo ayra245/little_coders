@@ -7,16 +7,20 @@ dotenv.config();
 
 const app = express();
 
+// Middleware
 app.use(express.json());
 app.use(cors());
 
+// Test route
 app.get("/", (req, res) => {
   res.send("Auth API with RBAC is running!");
 });
 
+// Routes
 const authRoutes = require("./src/route/authRoute");
 app.use("/api/auth", authRoutes);
 
+// Protected routes (optional examples)
 const auth = require("./src/middleware/auth");
 const verifyRole = require("./src/middleware/role");
 
@@ -28,6 +32,7 @@ app.get("/api/admin/dashboard", auth, verifyRole(["admin"]), (req, res) => {
   res.json({ message: "Welcome to the Admin Dashboard" });
 });
 
+// DB connect
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -36,5 +41,6 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB error:", err));
 
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
