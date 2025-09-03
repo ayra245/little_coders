@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext.js"; 
 
 function Register() {
   const [formData, setFormData] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
-    role: "user", // 
+    role: "user",
   });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext); 
 
   useEffect(() => {
     const link = document.createElement("link");
@@ -28,21 +30,29 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage("");
+
     try {
       const res = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData), 
+        body: JSON.stringify(formData),
       });
+
       const data = await res.json();
 
       if (res.ok) {
         setMessage("Registered successfully!");
-        setTimeout(() => {
-          navigate("/login");
-        }, 1000);
+
+        login(data.user, data.token);
+
+        if (data.user.role === "admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/user/dashboard");
+        }
       } else {
-        setMessage(data.message || "Registration failed!");
+        setMessage((data.message || "Registration failed!"));
       }
     } catch (error) {
       setMessage("Error: " + error.message);
@@ -62,8 +72,8 @@ function Register() {
           <label>Full Name</label>
           <input
             type="text"
-            name="username"
-            value={formData.username}
+            name="name"
+            value={formData.name}
             onChange={handleChange}
             required
           />
@@ -88,6 +98,7 @@ function Register() {
 
           <button type="submit" className="auth-btn">Register</button>
         </form>
+
         {message && <p className="auth-message">{message}</p>}
 
         <div className="auth-footer">

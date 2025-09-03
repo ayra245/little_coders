@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { forgotPassword } from "../../service/api";
 
 function ForgotPassword() {
-  const [formData, setFormData] = useState({ email: "", newPassword: "" });
+  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const link = document.createElement("link");
@@ -17,32 +17,15 @@ function ForgotPassword() {
     };
   }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        setMessage("Password updated successfully! Redirecting to login...");
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000); 
-      } else {
-        setMessage(data.message || "Something went wrong!");
-      }
-    } catch (error) {
-      setMessage("Error: " + error.message);
-    }
-  };
+  e.preventDefault();
+  try {
+    await forgotPassword(email);
+    setMessage("Email sent! Check your inbox to reset your password.");
+  } catch (err) {
+    setMessage((err.response?.data?.message || "Something went wrong!"));
+  }
+};
 
   return (
     <div className="auth-container">
@@ -58,21 +41,12 @@ function ForgotPassword() {
           <input
             type="email"
             name="email"
-            value={formData.email}
-            onChange={handleChange}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
 
-          <label>New Password</label>
-          <input
-            type="password"
-            name="newPassword"
-            value={formData.newPassword}
-            onChange={handleChange}
-            required
-          />
-
-          <button type="submit" className="auth-btn">Update Password</button>
+          <button type="submit" className="auth-btn">Send Reset Link</button>
         </form>
 
         {message && <p className="auth-message">{message}</p>}

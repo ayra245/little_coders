@@ -5,6 +5,7 @@ import Register from "./page/authentication/Register";
 import Login from "./page/authentication/Login";
 import Try from "./page/authentication/Try";
 import ForgotPassword from "./page/authentication/ForgotPassword"; 
+import ResetPassword from "./page/authentication/ResetPassword"; 
 
 import UserDashboard from "./page/user/Dashboard";
 import AdminDashboard from "./page/admin/Dashboard";
@@ -16,23 +17,14 @@ import { AuthContext } from "./context/AuthContext";
 function Navbar({ logout }) {
   const location = useLocation();
 
-  if (location.pathname === "/register" || location.pathname === "/login" || location.pathname === "/forgot-password") {
+  if (
+    location.pathname === "/register" || 
+    location.pathname === "/login" || 
+    location.pathname === "/forgot-password" ||
+    location.pathname.startsWith("/reset-password") 
+  ) {
     return null;
   }
-
-  return (
-    <nav style={{ padding: "10px" }}>
-      <Link to="/register">Register</Link> |{" "}
-      <Link to="/login">Login</Link> |{" "}
-      <Link to="/try">Try</Link> |{" "}
-      <Link to="/user/dashboard">User Dashboard</Link> |{" "}
-      <Link to="/admin/dashboard">Admin Dashboard</Link> |{" "}
-      <Link to="/user/profile">Profile</Link>
-      <button onClick={logout} style={{ marginLeft: "10px" }}>
-        Logout
-      </button>
-    </nav>
-  );
 }
 
 function App() {
@@ -48,6 +40,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} /> 
         <Route path="/try" element={<Try />} />
 
         <Route
@@ -58,7 +51,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/admin/dashboard"
           element={
@@ -67,7 +59,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/user/profile"
           element={

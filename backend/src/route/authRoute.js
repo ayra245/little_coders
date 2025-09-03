@@ -3,7 +3,8 @@ const router = express.Router();
 const {
   register,
   login,
-  simpleForgotPassword
+  forgotPassword,
+  resetPassword,
 } = require("../controller/authController");
 
 router.get("/", (req, res) => {
@@ -12,6 +13,8 @@ router.get("/", (req, res) => {
 
 router.post("/register", register);
 router.post("/login", login);
-router.post("/forgot-password", simpleForgotPassword);
+
+router.post("/forgot-password", forgotPassword);  
+router.post("/reset-password/:token", resetPassword); 
 
 module.exports = router;

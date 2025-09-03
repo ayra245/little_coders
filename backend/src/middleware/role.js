@@ -1,4 +1,3 @@
-// role.js
 const verifyRole = (allowedRoles = []) => {
     return (req, res, next) => {
       if (!req.user) {

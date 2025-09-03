@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext.js";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -8,6 +9,7 @@ function Login() {
   });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext); 
 
   useEffect(() => {
     const link = document.createElement("link");
@@ -32,23 +34,22 @@ function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+
       const data = await res.json();
 
       if (res.ok) {
         setMessage("Logged in successfully!");
+        console.log("Logged in user role:", data.user.role);
 
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.role);
+        login(data.user, data.token);
 
-        setTimeout(() => {
-          if (data.role === "admin") {
-            navigate("/admin/dashboard");
-          } else {
-            navigate("/user/dashboard");
-          }
-        }, 1000);
+        if (data.user.role === "admin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/user/dashboard");
+        }
       } else {
-        setMessage(data.message || "Login failed!");
+        setMessage((data.message || "Login failed!"));
       }
     } catch (error) {
       setMessage("Error: " + error.message);
