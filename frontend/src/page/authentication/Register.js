@@ -31,33 +31,30 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
-
+  
     try {
       const res = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
+  
       const data = await res.json();
-
+  
       if (res.ok) {
         setMessage("Registered successfully!");
-
-        login(data.user, data.token);
-
-        if (data.user.role === "admin") {
-          navigate("/admin/dashboard");
-        } else {
-          navigate("/user/dashboard");
-        }
+        
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000); 
       } else {
-        setMessage((data.message || "Registration failed!"));
+        setMessage(data.message || "Registration failed!");
       }
     } catch (error) {
       setMessage("Error: " + error.message);
     }
   };
+  
 
   return (
     <div className="auth-container">
