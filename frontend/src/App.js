@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from "react-router-dom";
 
+
 import Register from "./page/authentication/Register";
 import Login from "./page/authentication/Login";
 import Try from "./page/authentication/Try";
@@ -10,6 +11,9 @@ import ResetPassword from "./page/authentication/ResetPassword";
 import UserDashboard from "./page/user/Dashboard";
 import AdminDashboard from "./page/admin/Dashboard";
 import Profile from "./page/user/Profile";
+import ManageLesson from "./page/admin/ManageLesson";
+import CreateLesson from "./page/admin/CreateLesson";
+import ManageSingleLesson from "./page/admin/ManageSingleLesson";
 
 import ProtectedRoute from "./components/ProtectedRoute"; 
 import { AuthContext } from "./context/AuthContext"; 
@@ -67,6 +71,10 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="/admin/lessons" element={<ManageLesson />} />
+        <Route path="/admin/lessons/create" element={<CreateLesson />} />
+        <Route path="/admin/lessons/:id/manage" element={<ManageSingleLesson />} />
       </Routes>
     </Router>
   );
