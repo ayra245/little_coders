@@ -1,96 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
+import Sidebar from "../../components/admin/Sidebar";
 import "./Lessons.css";
-import { FiLogOut, FiEdit2 } from "react-icons/fi";
+import { FiEdit2 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 function CreateLesson() {
   const navigate = useNavigate();
 
+  const [lessonName, setLessonName] = useState("Lesson Name");
+  const [description, setDescription] = useState("Description");
+  const [objectives, setObjectives] = useState("Objectives");
+  const [isEditing, setIsEditing] = useState(false);
+
+  const handleEdit = (field) => setIsEditing(field);
+  const handleSaveEdit = () => setIsEditing(false);
+
+  const handleSave = () => {
+    const newLessonId = Date.now(); // unique ID
+    const newLesson = {
+      id: newLessonId,
+      lessonName,
+      description,
+      objectives,
+      modules: [],
+    };
+
+    // Save to localStorage
+    const savedLessons = JSON.parse(localStorage.getItem("lessons")) || [];
+    savedLessons.push(newLesson);
+    localStorage.setItem("lessons", JSON.stringify(savedLessons));
+
+    // Redirect to ManageSingleLesson
+    navigate(`/admin/lessons/${newLessonId}/manage`, {
+      state: { lesson: newLesson, from: "/admin/lessons/page" },
+    });
+  };
+
   return (
     <div className="admin-layout">
-      
-      <aside className="sidebar">
-        <div className="sidebar-header" style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "32px" }}>
-          <div className="avatar logo" style={{ width: 120, height: 120, marginBottom: "8px" }}>
-            <img src="/assets/images/logo192.png" alt="Logo" style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }} />
-          </div>
-          <div className="brand" style={{ marginTop: "8px", fontSize: "1.2rem", color: "#fff", textAlign: "center" }}>Little Coders</div>
-        </div>
-        <hr style={{ border: "none", borderTop: "2px solid #444", margin: "24px 0 16px 0" }} />
-        <nav>
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            <li style={{ margin: "24px 0", color: "#fff", fontSize: "1.1rem", textAlign: "center" }}>Dashboard</li>
-            <li style={{ margin: "24px 0", color: "#fff", fontSize: "1.1rem", textAlign: "center" }}>Users</li>
-            <li style={{ margin: "24px 0", textAlign: "center" }}>
-              <button style={{
-                width: "90%",
-                padding: "8px 0",
-                borderRadius: "8px",
-                background: "#e0e0e0",
-                color: "#222",
-                border: "none",
-                fontSize: "1.1rem",
-                fontWeight: "bold",
-                cursor: "pointer"
-              }}>Lessons</button>
-            </li>
-          </ul>
-        </nav>
-        <hr style={{ border: "none", borderTop: "2px solid #444", margin: "24px 0 16px 0" }} />
-        <div
-          className="sidebar-footer"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-            padding: "0 13px 16px 13px",
-            marginTop: "auto"
-          }}
-        >
-          <div className="avatar small" style={{ width: 48, height: 48, minWidth: 48 }}>
-            <img
-              src="/assets/images/profile.png"
-              alt="Profile"
-              style={{
-                width: "48px",
-                height: "48px",
-                borderRadius: "50%",
-                objectFit: "cover"
-              }}
-            />
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", minWidth: "110px" }}>
-            <span style={{ fontWeight: "bold", fontSize: "1.15rem", lineHeight: "1.1", color: "#fff" }}>Admin Name</span>
-            <span className="role" style={{ fontSize: "0.95rem", color: "#aaa", lineHeight: "1.1" }}>Admin</span>
-          </div>
-          <button
-            className="logout-btn"
-            title="Logout"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "0",
-              width: "40px",
-              height: "40px",
-              borderRadius: "12px",
-              background: "#e5e5e5",
-              color: "#222",
-              border: "none",
-              cursor: "pointer"
-            }}
-            onClick={() => {
-              alert("Logging out...");
-            }}
-          >
-            <FiLogOut size={26} />
-          </button>
-        </div>
-      </aside>
-
-     
+      <Sidebar />
       <main className="main-content" style={{ padding: "40px 32px" }}>
-       
         <div
           style={{
             background: "#ddd",
@@ -99,111 +48,177 @@ function CreateLesson() {
             marginBottom: "24px",
             textAlign: "center",
             fontSize: "2.5rem",
-            fontWeight: "500"
+            fontWeight: "500",
           }}
         >
           Create Lesson
         </div>
+
         <hr style={{ margin: "32px 0 24px 0", border: "none", borderTop: "2px solid #aaa" }} />
 
-        
+        {/* Lesson Name */}
         <div style={{ marginBottom: "24px" }}>
-          <div style={{ fontSize: "1.1rem", marginBottom: "8px" }}>Lesson Header</div>
-          <div style={{
-            background: "#ddd",
-            borderRadius: "12px",
-            padding: "32px 0",
-            fontSize: "2.2rem",
-            fontWeight: "500",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between"
-          }}>
-            <span style={{ marginLeft: "24px" }}>Lesson Name</span>
-            <button style={{
-              marginRight: "24px",
-              background: "#222",
-              color: "#fff",
-              border: "none",
-              borderRadius: "10px",
-              width: "40px",
-              height: "40px",
+          <div style={{ fontSize: "1.1rem", marginBottom: "8px" }}>Lesson Name</div>
+          <div
+            style={{
+              background: "#ddd",
+              borderRadius: "12px",
+              padding: "32px 0",
+              fontSize: "2.2rem",
+              fontWeight: "500",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer"
-            }}>
+              justifyContent: "space-between",
+            }}
+          >
+            {isEditing === "lessonName" ? (
+              <input
+                type="text"
+                value={lessonName}
+                onChange={(e) => setLessonName(e.target.value)}
+                style={{
+                  marginLeft: "24px",
+                  fontSize: "1.5rem",
+                  border: "1px solid #aaa",
+                  borderRadius: "8px",
+                  padding: "8px",
+                }}
+              />
+            ) : (
+              <span style={{ marginLeft: "24px" }}>{lessonName}</span>
+            )}
+            <button
+              style={{
+                marginRight: "24px",
+                background: "#222",
+                color: "#fff",
+                border: "none",
+                borderRadius: "10px",
+                width: "40px",
+                height: "40px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+              }}
+              onClick={() =>
+                isEditing === "lessonName" ? handleSaveEdit() : handleEdit("lessonName")
+              }
+            >
               <FiEdit2 size={20} />
             </button>
           </div>
         </div>
 
-        
+        {/* Description */}
         <div style={{ marginBottom: "24px" }}>
           <div style={{ fontSize: "1.1rem", marginBottom: "8px" }}>Description</div>
-          <div style={{
-            background: "#ddd",
-            borderRadius: "12px",
-            padding: "32px 0",
-            fontSize: "1.3rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between"
-          }}>
-            <span style={{ marginLeft: "24px" }}></span>
-            <button style={{
-              marginRight: "24px",
-              background: "#222",
-              color: "#fff",
-              border: "none",
-              borderRadius: "10px",
-              width: "40px",
-              height: "40px",
+          <div
+            style={{
+              background: "#ddd",
+              borderRadius: "12px",
+              padding: "32px 0",
+              fontSize: "1.3rem",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer"
-            }}>
+              justifyContent: "space-between",
+            }}
+          >
+            {isEditing === "description" ? (
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                style={{
+                  marginLeft: "24px",
+                  fontSize: "1.2rem",
+                  border: "1px solid #aaa",
+                  borderRadius: "8px",
+                  padding: "8px",
+                  width: "80%",
+                }}
+              />
+            ) : (
+              <span style={{ marginLeft: "24px" }}>{description}</span>
+            )}
+            <button
+              style={{
+                marginRight: "24px",
+                background: "#222",
+                color: "#fff",
+                border: "none",
+                borderRadius: "10px",
+                width: "40px",
+                height: "40px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+              }}
+              onClick={() =>
+                isEditing === "description" ? handleSaveEdit() : handleEdit("description")
+              }
+            >
               <FiEdit2 size={20} />
             </button>
           </div>
         </div>
 
-       
+        {/* Objectives */}
         <div style={{ marginBottom: "40px" }}>
           <div style={{ fontSize: "1.1rem", marginBottom: "8px" }}>Objectives</div>
-          <div style={{
-            background: "#ddd",
-            borderRadius: "12px",
-            padding: "32px 0",
-            fontSize: "1.3rem",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between"
-          }}>
-            <span style={{ marginLeft: "24px" }}></span>
-            <button style={{
-              marginRight: "24px",
-              background: "#222",
-              color: "#fff",
-              border: "none",
-              borderRadius: "10px",
-              width: "40px",
-              height: "40px",
+          <div
+            style={{
+              background: "#ddd",
+              borderRadius: "12px",
+              padding: "32px 0",
+              fontSize: "1.3rem",
               display: "flex",
               alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer"
-            }}>
+              justifyContent: "space-between",
+            }}
+          >
+            {isEditing === "objectives" ? (
+              <textarea
+                value={objectives}
+                onChange={(e) => setObjectives(e.target.value)}
+                style={{
+                  marginLeft: "24px",
+                  fontSize: "1.2rem",
+                  border: "1px solid #aaa",
+                  borderRadius: "8px",
+                  padding: "8px",
+                  width: "80%",
+                }}
+              />
+            ) : (
+              <span style={{ marginLeft: "24px" }}>{objectives}</span>
+            )}
+            <button
+              style={{
+                marginRight: "24px",
+                background: "#222",
+                color: "#fff",
+                border: "none",
+                borderRadius: "10px",
+                width: "40px",
+                height: "40px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+              }}
+              onClick={() =>
+                isEditing === "objectives" ? handleSaveEdit() : handleEdit("objectives")
+              }
+            >
               <FiEdit2 size={20} />
             </button>
           </div>
         </div>
 
-       
+        {/* Save and Cancel */}
         <div style={{ display: "flex", justifyContent: "flex-end", gap: "16px" }}>
           <button
-            className="btn cancel"
             style={{
               background: "#ddd",
               color: "#222",
@@ -211,14 +226,13 @@ function CreateLesson() {
               borderRadius: "8px",
               padding: "12px 32px",
               fontSize: "1.1rem",
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={() => navigate(-1)}
           >
             Cancel
           </button>
           <button
-            className="btn save"
             style={{
               background: "#222",
               color: "#fff",
@@ -226,9 +240,9 @@ function CreateLesson() {
               borderRadius: "8px",
               padding: "12px 32px",
               fontSize: "1.1rem",
-              cursor: "pointer"
+              cursor: "pointer",
             }}
-            onClick={() => alert("Saved!")}
+            onClick={handleSave}
           >
             Save and Manage
           </button>

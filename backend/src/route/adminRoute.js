@@ -6,16 +6,14 @@ import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const navigate = useNavigate();
-  const [stats, setStats] = useState({
-    totalUsers: 0,
-    totalLessons: 0,
-    activeModules: 0,
-    recentActivities: [],
-  });
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalLessons, setTotalLessons] = useState(0);
+  const [activeModules, setActiveModules] = useState(0);
+  const [recentActivities, setRecentActivities] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchDashboardData = async () => {
       try {
         const token = localStorage.getItem("token");
 
@@ -24,32 +22,30 @@ function Dashboard() {
           headers: { Authorization: `Bearer ${token}` },
         });
         const usersData = await usersRes.json();
+        setTotalUsers(usersData.length);
 
         // Fetch lessons
         const lessonsRes = await fetch("http://localhost:5000/api/lessons");
         const lessonsData = await lessonsRes.json();
+        setTotalLessons(lessonsData.length);
 
         // Count total modules
         let modulesCount = 0;
-        lessonsData.forEach(lesson => {
+        lessonsData.forEach((lesson) => {
           if (lesson.modules) modulesCount += lesson.modules.length;
         });
+        setActiveModules(modulesCount);
 
-        // Recent activities (last 5 users & lessons)
+        // Recent activities (simplified: last 5 users & lessons changes)
         const activities = [];
-        usersData.slice(-5).reverse().forEach(user => {
-          activities.push({ type: "user", action: "registered", user });
-        });
-        lessonsData.slice(-5).reverse().forEach(lesson => {
-          activities.push({ type: "lesson", action: "created/updated", user: lesson.creator || null, targetLesson: lesson });
-        });
+        usersData.slice(-5).forEach((user) =>
+          activities.push(`👤 User "${user.name}" registered`)
+        );
+        lessonsData.slice(-5).forEach((lesson) =>
+          activities.push(`📘 Lesson "${lesson.name}" created/updated`)
+        );
+        setRecentActivities(activities);
 
-        setStats({
-          totalUsers: usersData.length,
-          totalLessons: lessonsData.length,
-          activeModules: modulesCount,
-          recentActivities: activities,
-        });
         setLoading(false);
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
@@ -57,11 +53,7 @@ function Dashboard() {
       }
     };
 
-    // Initial fetch + auto-refresh every 10 seconds
-    fetchStats();
-    const interval = setInterval(fetchStats, 10000);
-
-    return () => clearInterval(interval); // cleanup interval on unmount
+    fetchDashboardData();
   }, []);
 
   if (loading) return <p>Loading dashboard...</p>;
@@ -80,14 +72,28 @@ function Dashboard() {
         <nav>
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             <li style={{ margin: "24px 0", textAlign: "center" }}>
-              <button style={{ width: "90%", padding: "8px 0", borderRadius: "8px", background: "#e0e0e0", color: "#222", border: "none", fontSize: "1.1rem", fontWeight: "bold", cursor: "pointer" }}>
+              <button
+                style={{
+                  width: "90%",
+                  padding: "8px 0",
+                  borderRadius: "8px",
+                  background: "#e0e0e0",
+                  color: "#222",
+                  border: "none",
+                  fontSize: "1.1rem",
+                  fontWeight: "bold",
+                  cursor: "pointer"
+                }}
+              >
                 Dashboard
               </button>
             </li>
-            <li style={{ margin: "24px 0", color: "#fff", fontSize: "1.1rem", textAlign: "center", cursor: "pointer" }} onClick={() => navigate("/admin/users")}>
+            <li style={{ margin: "24px 0", color: "#fff", fontSize: "1.1rem", textAlign: "center", cursor: "pointer" }}
+                onClick={() => navigate("/admin/users")}>
               Users
             </li>
-            <li style={{ margin: "24px 0", color: "#fff", fontSize: "1.1rem", textAlign: "center", cursor: "pointer" }} onClick={() => navigate("/admin/lessons")}>
+            <li style={{ margin: "24px 0", color: "#fff", fontSize: "1.1rem", textAlign: "center", cursor: "pointer" }}
+                onClick={() => navigate("/admin/lessons")}>
               Lessons
             </li>
           </ul>
@@ -101,7 +107,12 @@ function Dashboard() {
             <span style={{ fontWeight: "bold", fontSize: "1.15rem", lineHeight: "1.1", color: "#fff" }}>Admin Name</span>
             <span className="role" style={{ fontSize: "0.95rem", color: "#aaa", lineHeight: "1.1" }}>Admin</span>
           </div>
-          <button className="logout-btn" title="Logout" style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "0", width: "40px", height: "40px", borderRadius: "12px", background: "#e5e5e5", color: "#222", border: "none", cursor: "pointer" }} onClick={() => alert("Logging out...")}>
+          <button
+            className="logout-btn"
+            title="Logout"
+            style={{ display: "flex", alignItems: "center", justifyContent: "center", padding: "0", width: "40px", height: "40px", borderRadius: "12px", background: "#e5e5e5", color: "#222", border: "none", cursor: "pointer" }}
+            onClick={() => { alert("Logging out..."); }}
+          >
             <FiLogOut size={26} />
           </button>
         </div>
@@ -118,36 +129,28 @@ function Dashboard() {
           <div style={{ flex: 1, background: "#f5f5f5", borderRadius: "12px", padding: "32px", textAlign: "center" }}>
             <FiUsers size={40} style={{ marginBottom: "16px" }} />
             <h3>Total Users</h3>
-            <p style={{ fontSize: "2rem", fontWeight: "bold" }}>{stats.totalUsers}</p>
+            <p style={{ fontSize: "2rem", fontWeight: "bold" }}>{totalUsers}</p>
           </div>
           <div style={{ flex: 1, background: "#f5f5f5", borderRadius: "12px", padding: "32px", textAlign: "center" }}>
             <FiBook size={40} style={{ marginBottom: "16px" }} />
             <h3>Total Lessons</h3>
-            <p style={{ fontSize: "2rem", fontWeight: "bold" }}>{stats.totalLessons}</p>
+            <p style={{ fontSize: "2rem", fontWeight: "bold" }}>{totalLessons}</p>
           </div>
           <div style={{ flex: 1, background: "#f5f5f5", borderRadius: "12px", padding: "32px", textAlign: "center" }}>
             <FiBarChart2 size={40} style={{ marginBottom: "16px" }} />
             <h3>Active Modules</h3>
-            <p style={{ fontSize: "2rem", fontWeight: "bold" }}>{stats.activeModules}</p>
+            <p style={{ fontSize: "2rem", fontWeight: "bold" }}>{activeModules}</p>
           </div>
         </div>
 
         {/* Recent Activities */}
         <div style={{ background: "#eee", borderRadius: "12px", padding: "24px" }}>
           <h2 style={{ marginBottom: "16px" }}>Recent Activities</h2>
-          {stats.recentActivities.length === 0 ? (
-            <p>No recent activities</p>
-          ) : (
-            <ul>
-              {stats.recentActivities.map((act, i) => (
-                <li key={i}>
-                  {act.type === "user"
-                    ? `👤 User "${act.user.name}" registered`
-                    : `📘 Lesson "${act.targetLesson.name}" created/updated`}
-                </li>
-              ))}
-            </ul>
-          )}
+          <ul>
+            {recentActivities.length > 0 ? recentActivities.map((act, i) => (
+              <li key={i}>{act}</li>
+            )) : <li>No recent activities</li>}
+          </ul>
         </div>
       </main>
     </div>

@@ -14,8 +14,24 @@ app.get("/", (req, res) => {
   res.send("Auth API with RBAC is running!");
 });
 
+const adminRoutes = require("./src/route/adminRoute");
+app.use("/api/admin", adminRoutes);
+
 const authRoutes = require("./src/route/authRoute");
 app.use("/api/auth", authRoutes);
+
+const dashboardRoutes = require("./src/route/dashboardRoute");
+app.use("/api/admin", dashboardRoutes);
+
+
+const dashboardRoutes = require("./src/route/dashboardRoute");
+app.use("/api/admin/dashboard-stats", dashboardRoutes);
+
+const lessonRoutes = require("./src/route/lessonRoute");
+app.use("/api/lessons", lessonRoutes);
+
+const userRoutes = require("./src/route/userRoute");
+app.use("/api/admin/users", userRoutes);
 
 const auth = require("./src/middleware/auth");
 const verifyRole = require("./src/middleware/role");
