@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Lesson = require("../model/Lesson");
 
-
+// Get all lessons
 router.get("/", async (req, res) => {
   try {
     const lessons = await Lesson.find();
@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-
+// Get single lesson
 router.get("/:id", async (req, res) => {
   try {
     const lesson = await Lesson.findById(req.params.id);
@@ -38,7 +38,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-
+// Update lesson
 router.put("/:id", async (req, res) => {
   try {
     const updatedLesson = await Lesson.findByIdAndUpdate(
@@ -52,7 +52,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-
+// Delete lesson
 router.delete("/:id", async (req, res) => {
   try {
     await Lesson.findByIdAndDelete(req.params.id);

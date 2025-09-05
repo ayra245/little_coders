@@ -16,7 +16,7 @@ function CreateLesson() {
   const handleSaveEdit = () => setIsEditing(false);
 
   const handleSave = () => {
-    const newLessonId = Date.now(); // unique ID
+    const newLessonId = Date.now(); 
     const newLesson = {
       id: newLessonId,
       lessonName,
@@ -25,12 +25,12 @@ function CreateLesson() {
       modules: [],
     };
 
-    // Save to localStorage
+    
     const savedLessons = JSON.parse(localStorage.getItem("lessons")) || [];
     savedLessons.push(newLesson);
     localStorage.setItem("lessons", JSON.stringify(savedLessons));
 
-    // Redirect to ManageSingleLesson
+    
     navigate(`/admin/lessons/${newLessonId}/manage`, {
       state: { lesson: newLesson, from: "/admin/lessons/page" },
     });
@@ -56,7 +56,7 @@ function CreateLesson() {
 
         <hr style={{ margin: "32px 0 24px 0", border: "none", borderTop: "2px solid #aaa" }} />
 
-        {/* Lesson Name */}
+        
         <div style={{ marginBottom: "24px" }}>
           <div style={{ fontSize: "1.1rem", marginBottom: "8px" }}>Lesson Name</div>
           <div
@@ -110,7 +110,7 @@ function CreateLesson() {
           </div>
         </div>
 
-        {/* Description */}
+        
         <div style={{ marginBottom: "24px" }}>
           <div style={{ fontSize: "1.1rem", marginBottom: "8px" }}>Description</div>
           <div
@@ -163,7 +163,7 @@ function CreateLesson() {
           </div>
         </div>
 
-        {/* Objectives */}
+        
         <div style={{ marginBottom: "40px" }}>
           <div style={{ fontSize: "1.1rem", marginBottom: "8px" }}>Objectives</div>
           <div
@@ -216,7 +216,7 @@ function CreateLesson() {
           </div>
         </div>
 
-        {/* Save and Cancel */}
+      
         <div style={{ display: "flex", justifyContent: "flex-end", gap: "16px" }}>
           <button
             style={{
