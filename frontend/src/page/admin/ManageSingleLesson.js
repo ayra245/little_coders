@@ -10,7 +10,7 @@ function ManageSingleLesson() {
 
   const prevPage = location.state?.from || "/admin/lessons/page";
 
-  // Load lesson from localStorage if page refreshed
+  
   const getLessonFromStorage = () => {
     const savedLessons = JSON.parse(localStorage.getItem("lessons")) || [];
     return (
@@ -43,7 +43,7 @@ function ManageSingleLesson() {
     objectives: lesson.objectives,
   });
 
-  // Save Module
+ 
   const handleModuleSave = () => {
     if (!moduleForm.moduleName) return alert("Enter module title.");
 
@@ -61,7 +61,7 @@ function ManageSingleLesson() {
     setShowModuleModal(false);
   };
 
-  // Save Edited Lesson
+  
   const handleLessonEditSave = () => {
     setLesson({
       ...lesson,
@@ -72,7 +72,7 @@ function ManageSingleLesson() {
     setShowEditLessonModal(false);
   };
 
-  // Save all changes to localStorage
+  
   const handleSaveAndManage = () => {
     try {
       const savedLessons = JSON.parse(localStorage.getItem("lessons")) || [];
@@ -114,7 +114,7 @@ function ManageSingleLesson() {
           Manage Lesson
         </div>
 
-        {/* Add Module */}
+        
         <div style={{ textAlign: "right", marginBottom: "24px" }}>
           <button
             style={{
@@ -131,7 +131,7 @@ function ManageSingleLesson() {
           </button>
         </div>
 
-        {/* Lesson Details */}
+        
         <div
           style={{
             background: "#f5f5f5",
@@ -165,7 +165,7 @@ function ManageSingleLesson() {
           </button>
         </div>
 
-        {/* Modules List */}
+       
         {modules.length > 0 ? (
           <div
             style={{
@@ -199,7 +199,7 @@ function ManageSingleLesson() {
           <p style={{ textAlign: "center", fontStyle: "italic", color: "#666" }}>No modules added yet.</p>
         )}
 
-        {/* Footer Buttons */}
+        
         <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "24px" }}>
           <button
             style={{ background: "#bbb", borderRadius: "8px", border: "none", padding: "12px 24px", cursor: "pointer" }}
@@ -215,7 +215,7 @@ function ManageSingleLesson() {
           </button>
         </div>
 
-        {/* Module Modal */}
+        
         {showModuleModal && (
           <div className="modal-overlay">
             <div className="modal">
@@ -253,7 +253,7 @@ function ManageSingleLesson() {
           </div>
         )}
 
-        {/* Edit Lesson Modal */}
+        
         {showEditLessonModal && (
           <div className="modal-overlay">
             <div className="modal">

@@ -5,20 +5,19 @@ const Lesson = require("../model/Lesson");
 const auth = require("../middleware/auth");
 const verifyRole = require("../middleware/role");
 
-// GET /api/admin/dashboard-stats
+
 router.get("/dashboard-stats", auth, verifyRole(["admin"]), async (req, res) => {
   try {
-    // Fetch all users and lessons
+   
     const users = await User.find().select("-password").sort({ createdAt: -1 });
     const lessons = await Lesson.find().sort({ createdAt: -1 });
 
-    // Count total modules
+    
     let totalModules = 0;
     lessons.forEach(lesson => {
       if (lesson.modules) totalModules += lesson.modules.length;
     });
 
-    // Prepare recent activities (latest 5 users and lessons)
     const recentActivities = [];
 
     users.slice(0, 5).forEach(user => {

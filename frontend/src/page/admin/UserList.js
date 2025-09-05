@@ -1,4 +1,3 @@
-// src/page/admin/UserList.js
 import React, { useEffect, useState } from "react";
 import "./Lessons.css"; 
 import { FiLogOut } from "react-icons/fi";
@@ -10,7 +9,7 @@ function UserList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Fetch real users from backend
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -41,7 +40,7 @@ function UserList() {
 
   return (
     <div className="admin-layout">
-      {/* Sidebar */}
+      
       <aside className="sidebar">
         <div
           className="sidebar-header"
@@ -105,7 +104,7 @@ function UserList() {
         </div>
       </aside>
 
-      {/* Main Content */}
+      
       <main className="main-content">
         <div className="header">
           <h1>User Management</h1>

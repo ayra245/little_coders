@@ -17,26 +17,25 @@ function Dashboard() {
       try {
         const token = localStorage.getItem("token");
 
-        // Fetch users
+       
         const usersRes = await fetch("http://localhost:5000/api/admin/users", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const usersData = await usersRes.json();
         setTotalUsers(usersData.length);
 
-        // Fetch lessons
         const lessonsRes = await fetch("http://localhost:5000/api/lessons");
         const lessonsData = await lessonsRes.json();
         setTotalLessons(lessonsData.length);
 
-        // Count total modules
+        
         let modulesCount = 0;
         lessonsData.forEach((lesson) => {
           if (lesson.modules) modulesCount += lesson.modules.length;
         });
         setActiveModules(modulesCount);
 
-        // Recent activities (simplified: last 5 users & lessons changes)
+        
         const activities = [];
         usersData.slice(-5).forEach((user) =>
           activities.push(`👤 User "${user.name}" registered`)
@@ -60,7 +59,7 @@ function Dashboard() {
 
   return (
     <div className="admin-layout">
-      {/* Sidebar */}
+      
       <aside className="sidebar">
         <div className="sidebar-header" style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "32px" }}>
           <div className="avatar logo" style={{ width: 120, height: 120, marginBottom: "8px" }}>
@@ -118,13 +117,13 @@ function Dashboard() {
         </div>
       </aside>
 
-      {/* Main Content */}
+      
       <main className="main-content" style={{ padding: "40px 32px" }}>
         <div style={{ background: "#ddd", borderRadius: "16px", padding: "32px 0", marginBottom: "32px", textAlign: "center", fontSize: "2.5rem", fontWeight: "500" }}>
           Admin Dashboard
         </div>
 
-        {/* Dashboard Cards */}
+        
         <div style={{ display: "flex", gap: "32px", marginBottom: "40px" }}>
           <div style={{ flex: 1, background: "#f5f5f5", borderRadius: "12px", padding: "32px", textAlign: "center" }}>
             <FiUsers size={40} style={{ marginBottom: "16px" }} />
@@ -143,7 +142,7 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* Recent Activities */}
+        
         <div style={{ background: "#eee", borderRadius: "12px", padding: "24px" }}>
           <h2 style={{ marginBottom: "16px" }}>Recent Activities</h2>
           <ul>

@@ -6,7 +6,7 @@ const Activity = require("../model/Activity");
 const auth = require("../middleware/auth");
 const verifyRole = require("../middleware/role");
 
-// Get aggregated dashboard stats
+
 router.get("/dashboard-stats", auth, verifyRole(["admin"]), async (req, res) => {
   try {
     const totalUsers = await User.countDocuments();

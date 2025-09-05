@@ -1,11 +1,10 @@
-// src/route/userRoute.js
 const express = require("express");
 const router = express.Router();
 const User = require("../model/User");
 const auth = require("../middleware/auth");
 const verifyRole = require("../middleware/role");
 
-// GET all users (admin only)
+
 router.get("/", auth, verifyRole(["admin"]), async (req, res) => {
   try {
     const users = await User.find().select("-password"); // exclude passwords

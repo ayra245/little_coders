@@ -163,13 +163,13 @@ nav ul {
   cursor: pointer;
 }
 
-/* Main Content */
+
 .main-content {
   flex: 1;
-  margin-left: 220px; /* Match sidebar width */
+  margin-left: 220px; 
   background: #fff;
   padding: 40px;
-  overflow-y: auto; /* Allow scrolling only for main content */
+  overflow-y: auto; 
 }
 .header h1 {
   background: #ddd;

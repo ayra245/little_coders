@@ -11,7 +11,7 @@ function ManageLesson() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredLessons, setFilteredLessons] = useState([]);
 
-  // Load lessons from navigate state or fallback to localStorage
+  
   useEffect(() => {
     if (location.state && location.state.lessons) {
       setLessons(location.state.lessons);
@@ -25,7 +25,7 @@ function ManageLesson() {
     }
   }, [location.state]);
 
-  // Search filter
+  
   useEffect(() => {
     if (!searchTerm.trim()) {
       setFilteredLessons(lessons);
@@ -57,7 +57,7 @@ function ManageLesson() {
           Manage Lessons
         </div>
 
-        {/* Search Section */}
+        
         <div style={{ display: "flex", alignItems: "center", marginBottom: "32px" }}>
           <input
             type="text"
@@ -102,7 +102,7 @@ function ManageLesson() {
           </button>
         </div>
 
-        {/* Display Lessons */}
+        
         <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
           {filteredLessons.length > 0 ? (
             filteredLessons.map((lesson) => (
