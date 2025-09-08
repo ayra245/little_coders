@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./Lessons.css"; 
-import { FiLogOut } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import Sidebar from "../../components/admin/Sidebar";  
+
 
 function UserList() {
   const navigate = useNavigate();
@@ -9,11 +10,10 @@ function UserList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const token = localStorage.getItem("token"); // your JWT token
+        const token = localStorage.getItem("token"); 
         const response = await fetch("http://localhost:5000/api/admin/users", {
           headers: {
             "Content-Type": "application/json",
@@ -41,68 +41,7 @@ function UserList() {
   return (
     <div className="admin-layout">
       
-      <aside className="sidebar">
-        <div
-          className="sidebar-header"
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            marginTop: "32px",
-          }}
-        >
-          <div
-            className="avatar logo"
-            style={{ width: 120, height: 120, marginBottom: "8px" }}
-          >
-            <img
-              src="/assets/images/logo192.png"
-              alt="Logo"
-              style={{
-                width: "100%",
-                height: "100%",
-                borderRadius: "50%",
-                objectFit: "cover",
-              }}
-            />
-          </div>
-          <div
-            className="brand"
-            style={{ marginTop: "8px", fontSize: "1.2rem", color: "#fff", textAlign: "center" }}
-          >
-            Little Coders
-          </div>
-        </div>
-        <hr style={{ border: "none", borderTop: "2px solid #444", margin: "24px 0 16px 0" }} />
-        <nav>
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            <li style={{ margin: "24px 0", textAlign: "center" }}>
-              <button className="nav-btn" onClick={() => navigate("/admin/dashboard")}>
-                Dashboard
-              </button>
-            </li>
-            <li className="nav-btn active" onClick={() => navigate("/admin/users")}>
-              Users
-            </li>
-            <li className="nav-btn" onClick={() => navigate("/admin/lessons")}>
-              Lessons
-            </li>
-          </ul>
-        </nav>
-        <hr style={{ border: "none", borderTop: "2px solid #444", margin: "24px 0 16px 0" }} />
-        <div className="sidebar-footer">
-          <div className="avatar small">
-            <img src="/assets/images/profile.png" alt="Profile" />
-          </div>
-          <div className="user-info">
-            <span className="username">Admin Name</span>
-            <span className="role">Admin</span>
-          </div>
-          <button className="logout-btn" onClick={() => alert("Logging out...")}>
-            <FiLogOut size={26} />
-          </button>
-        </div>
-      </aside>
+      <Sidebar />   
 
       
       <main className="main-content">

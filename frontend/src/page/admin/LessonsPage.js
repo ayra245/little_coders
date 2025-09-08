@@ -1,661 +1,306 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/admin/Sidebar";
 import "./Lessons.css";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useLocation } from "react-router-dom";
+import { FiChevronDown, FiChevronRight, FiTrash2, FiXCircle } from "react-icons/fi";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd"; 
 function LessonsPage() {
   const navigate = useNavigate();
-  const [lessons, setLessons] = useState([]);
+  const location = useLocation();
+  const [allLessons, setAllLessons] = useState([]);
+  const [expanded, setExpanded] = useState({});
+  const [deleteMode, setDeleteMode] = useState(false);
+  const [selectedToDelete, setSelectedToDelete] = useState([]);
 
-  // Load saved lessons
+
   useEffect(() => {
-    const savedLessons = JSON.parse(localStorage.getItem("lessons")) || [];
-    setLessons(savedLessons);
-  }, []);
+    const storedLessons = JSON.parse(localStorage.getItem("lessons")) || [];
+    setAllLessons(storedLessons);
+  }, [location.key]);
 
-  // Modal states
-  const [showModuleModal, setShowModuleModal] = useState(false);
-  const [showEditLessonModal, setShowEditLessonModal] = useState(false);
-  const [showSubItemModal, setShowSubItemModal] = useState(false);
-
-  // Current lesson/module being edited
-  const [activeLessonId, setActiveLessonId] = useState(null);
-  const [activeModuleId, setActiveModuleId] = useState(null);
-
-  // Form states
-  const [moduleForm, setModuleForm] = useState({
-    moduleName: "",
-    type: "text",
-    moduleContent: "",
-    moduleFile: null,
-  });
-
-  const [editLessonForm, setEditLessonForm] = useState({
-    lessonName: "",
-    description: "",
-    objectives: "",
-  });
-
-  const [subItemForm, setSubItemForm] = useState({
-    type: "lesson", // "lesson" | "activity"
-    title: "",
-    inputType: "text", // text | file
-    content: "",
-    file: null,
-  });
-
-  // Save Module
-  const handleModuleSave = () => {
-    if (!moduleForm.moduleName) {
-      alert("Please enter a module title.");
-      return;
-    }
-
-    const newModule = {
-      id: Date.now(),
-      name: moduleForm.moduleName,
-      type: moduleForm.type,
-      content: moduleForm.type === "text" ? moduleForm.moduleContent : null,
-      file: moduleForm.type === "file" ? moduleForm.moduleFile : null,
-      lessons: [],
-      activities: [],
-    };
-
-    const updatedLessons = lessons.map((l) =>
-      l.id === activeLessonId
-        ? { ...l, modules: [...(l.modules || []), newModule] }
-        : l
-    );
-
-    setLessons(updatedLessons);
-    localStorage.setItem("lessons", JSON.stringify(updatedLessons));
-
-    setModuleForm({
-      moduleName: "",
-      type: "text",
-      moduleContent: "",
-      moduleFile: null,
-    });
-    setShowModuleModal(false);
+  const toggleExpand = (lessonId, type) => {
+    setExpanded((prev) => ({
+      ...prev,
+      [`${lessonId}-${type}`]: !prev[`${lessonId}-${type}`],
+    }));
   };
 
-  // Save Edited Lesson
-  const handleLessonEditSave = () => {
-    const updatedLessons = lessons.map((l) =>
-      l.id === activeLessonId ? { ...l, ...editLessonForm } : l
+  const handleCheckboxChange = (lessonId) => {
+    setSelectedToDelete((prev) =>
+      prev.includes(lessonId)
+        ? prev.filter((id) => id !== lessonId)
+        : [...prev, lessonId]
     );
-    setLessons(updatedLessons);
-    setShowEditLessonModal(false);
-    localStorage.setItem("lessons", JSON.stringify(updatedLessons));
   };
 
-  // Save SubItem
-  const handleSubItemSave = () => {
-    const newSubItem = {
-      type: subItemForm.type,
-      title: subItemForm.title,
-      inputType: subItemForm.inputType,
-      content: subItemForm.inputType === "text" ? subItemForm.content : null,
-      file: subItemForm.inputType === "file" ? subItemForm.file : null,
-    };
-
-    const updatedLessons = lessons.map((l) =>
-      l.id === activeLessonId
-        ? {
-            ...l,
-            modules: l.modules.map((m) =>
-              m.id === activeModuleId
-                ? {
-                    ...m,
-                    lessons:
-                      subItemForm.type === "lesson"
-                        ? [...(m.lessons || []), newSubItem]
-                        : m.lessons,
-                    activities:
-                      subItemForm.type === "activity"
-                        ? [...(m.activities || []), newSubItem]
-                        : m.activities,
-                  }
-                : m
-            ),
-          }
-        : l
+  const handleDelete = () => {
+    const updatedLessons = allLessons.filter(
+      (lesson) => !selectedToDelete.includes(lesson.id)
     );
-
-    setLessons(updatedLessons);
-    setSubItemForm({
-      type: "lesson",
-      title: "",
-      inputType: "text",
-      content: "",
-      file: null,
-    });
-    setShowSubItemModal(false);
+    setAllLessons(updatedLessons);
     localStorage.setItem("lessons", JSON.stringify(updatedLessons));
+    setSelectedToDelete([]);
+    setDeleteMode(false);
   };
 
-  // Cancel
-  const handleCancel = () => {
-  if (window.confirm("Are you sure you want to cancel? Unsaved changes will be lost.")) {
-    navigate(-1); // Goes back to the previous page in history
-  }
-};
+  
+  const handleDragEnd = (result, lessonId, type) => {
+    if (!result.destination) return;
 
+    const updatedLessons = [...allLessons];
+    const lessonIndex = updatedLessons.findIndex((l) => l.id === lessonId);
+    if (lessonIndex === -1) return;
 
-  // Save & Manage
-  const handleSaveAndManage = () => {
-  // Save all lessons to localStorage
-  localStorage.setItem("lessons", JSON.stringify(lessons));
+    const items = [...updatedLessons[lessonIndex][type]];
+    const [reordered] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reordered);
 
-  // Navigate to ManageLesson page
-  navigate("/admin/lessons", { state: { lessons } });
-};
+    updatedLessons[lessonIndex][type] = items;
 
+    setAllLessons(updatedLessons);
+    localStorage.setItem("lessons", JSON.stringify(updatedLessons));
+  };
 
   return (
     <div className="admin-layout">
       <Sidebar />
       <main className="main-content" style={{ padding: "40px 32px" }}>
-        <div
-          style={{
-            background: "#e5e5e5",
-            borderRadius: "12px",
-            padding: "20px",
-            textAlign: "center",
-            fontSize: "1.8rem",
-            fontWeight: "600",
-            marginBottom: "16px",
-          }}
-        >
-          Manage Lesson
-        </div>
+        <div className="page-header" style={{ marginBottom: "20px" }}>
+          <h1 style={{ fontSize: "24px", marginBottom: "5px" }}>📚 Lessons Library</h1>
+          <p style={{ color: "#666", marginBottom: "15px" }}>
+            A complete list of all your <strong>Lessons</strong>,{" "}
+            <strong>Activities</strong>, and <strong>Modules</strong>.
+          </p>
 
-        <hr style={{ marginBottom: "20px" }} />
-
-        {lessons.length === 0 && (
-          <p style={{ textAlign: "center", color: "#666" }}>No lessons created yet.</p>
-        )}
-
-        {lessons.map((lesson) => (
-          <div
-            key={lesson.id}
+          <hr
             style={{
-              background: "#f0f0f0",
-              borderRadius: "8px",
-              padding: "16px",
-              marginBottom: "24px",
+              border: "0",
+              borderTop: "1px solid #ddd",
+              margin: "10px 0 20px",
             }}
-          >
-            {/* Add Module + Delete Lesson */}
-            <div style={{ textAlign: "right", marginBottom: "10px" }}>
+          />
+
+          <div>
+            {!deleteMode ? (
               <button
+                className="btn delete-btn"
+                onClick={() => setDeleteMode(true)}
                 style={{
-                  background: "#222",
-                  color: "#fff",
+                  backgroundColor: "#f44336",
+                  color: "white",
+                  padding: "8px 14px",
                   border: "none",
-                  padding: "6px 14px",
-                  borderRadius: "6px",
+                  borderRadius: "8px",
                   cursor: "pointer",
-                  marginRight: "8px",
-                }}
-                onClick={() => {
-                  setActiveLessonId(lesson.id);
-                  setShowModuleModal(true);
+                  boxShadow: "0 3px 6px rgba(0,0,0,0.2)",
+                  marginTop: "5px",
                 }}
               >
-                Add Module
+                <FiTrash2 style={{ marginRight: "6px" }} /> Select Delete
               </button>
-
-              <button
-                style={{
-                  background: "red",
-                  color: "#fff",
-                  border: "none",
-                  padding: "6px 12px",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  if (window.confirm("Are you sure you want to delete this lesson?")) {
-                    const updatedLessons = lessons.filter((l) => l.id !== lesson.id);
-                    setLessons(updatedLessons);
-                    localStorage.setItem("lessons", JSON.stringify(updatedLessons));
-                  }
-                }}
-              >
-                🗑️
-              </button>
-            </div>
-
-            {/* Lesson Info */}
-            <div
-              style={{
-                background: "#d9d9d9",
-                borderRadius: "8px",
-                padding: "20px",
-                marginBottom: "16px",
-                position: "relative",
-              }}
-            >
-              <h2 style={{ textAlign: "center", marginBottom: "10px" }}>
-                {lesson.lessonName}
-              </h2>
-              <p style={{ textAlign: "center" }}>{lesson.description}</p>
-              <p style={{ textAlign: "center" }}>
-                <strong>Objectives:</strong> {lesson.objectives}
-              </p>
-
-              {/* Edit Button */}
-              <button
-                style={{
-                  position: "absolute",
-                  right: "10px",
-                  top: "10px",
-                  padding: "4px 10px",
-                  fontSize: "0.8rem",
-                  background: "#222",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  setActiveLessonId(lesson.id);
-                  setEditLessonForm({
-                    lessonName: lesson.lessonName,
-                    description: lesson.description,
-                    objectives: lesson.objectives,
-                  });
-                  setShowEditLessonModal(true);
-                }}
-              >
-                Edit
-              </button>
-            </div>
-
-            {/* Modules */}
-            {lesson.modules && lesson.modules.length > 0 ? (
-              lesson.modules.map((mod) => (
-                <div
-                  key={mod.id}
+            ) : (
+              <>
+                <button
+                  className="btn cancel-btn"
+                  onClick={() => {
+                    setDeleteMode(false);
+                    setSelectedToDelete([]);
+                  }}
                   style={{
-                    background: "#e5e5e5",
+                    backgroundColor: "#999",
+                    color: "white",
+                    padding: "8px 14px",
+                    border: "none",
                     borderRadius: "8px",
-                    padding: "16px",
-                    marginBottom: "12px",
+                    cursor: "pointer",
+                    marginRight: "10px",
+                    marginTop: "5px",
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      marginBottom: "10px",
-                    }}
-                  >
-                    <strong>{mod.name}</strong>
-                    <div>
-                      {/* Delete Module */}
-                      <button
-                        style={{
-                          background: "red",
-                          color: "#fff",
-                          border: "none",
-                          padding: "6px 12px",
-                          borderRadius: "6px",
-                          marginRight: "8px",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => {
-                          if (window.confirm("Delete this module?")) {
-                            const updatedLessons = lessons.map((l) =>
-                              l.id === lesson.id
-                                ? {
-                                    ...l,
-                                    modules: l.modules.filter((m) => m.id !== mod.id),
-                                  }
-                                : l
-                            );
-                            setLessons(updatedLessons);
-                            localStorage.setItem(
-                              "lessons",
-                              JSON.stringify(updatedLessons)
-                            );
-                          }
-                        }}
-                      >
-                        🗑️
-                      </button>
-
-                      <button
-                        style={{
-                          background: "#000",
-                          color: "#fff",
-                          border: "none",
-                          padding: "6px 12px",
-                          borderRadius: "6px",
-                          marginRight: "8px",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => {
-                          setActiveLessonId(lesson.id);
-                          setActiveModuleId(mod.id);
-                          setSubItemForm({
-                            type: "lesson",
-                            title: "",
-                            inputType: "text",
-                            content: "",
-                            file: null,
-                          });
-                          setShowSubItemModal(true);
-                        }}
-                      >
-                        Add Lesson
-                      </button>
-                      <button
-                        style={{
-                          background: "#000",
-                          color: "#fff",
-                          border: "none",
-                          padding: "6px 12px",
-                          borderRadius: "6px",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => {
-                          setActiveLessonId(lesson.id);
-                          setActiveModuleId(mod.id);
-                          setSubItemForm({
-                            type: "activity",
-                            title: "",
-                            inputType: "text",
-                            content: "",
-                            file: null,
-                          });
-                          setShowSubItemModal(true);
-                        }}
-                      >
-                        Add Activity
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Subitems */}
-                  {mod.lessons?.map((s, i) => (
-                    <p key={i}>
-                      📘 Lesson: {s.title}{" "}
-                      {s.inputType === "file" && s.file && <span>📎 {s.file.name}</span>}
-                      {s.inputType === "text" && s.content && <span> — {s.content}</span>}
-                      <button
-                        style={{
-                          background: "red",
-                          color: "#fff",
-                          border: "none",
-                          padding: "4px 8px",
-                          borderRadius: "6px",
-                          marginLeft: "10px",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => {
-                          if (window.confirm("Delete this lesson?")) {
-                            const updatedLessons = lessons.map((l) =>
-                              l.id === lesson.id
-                                ? {
-                                    ...l,
-                                    modules: l.modules.map((m) =>
-                                      m.id === mod.id
-                                        ? {
-                                            ...m,
-                                            lessons: m.lessons.filter(
-                                              (_, idx) => idx !== i
-                                            ),
-                                          }
-                                        : m
-                                    ),
-                                  }
-                                : l
-                            );
-                            setLessons(updatedLessons);
-                            localStorage.setItem(
-                              "lessons",
-                              JSON.stringify(updatedLessons)
-                            );
-                          }
-                        }}
-                      >
-                        🗑️
-                      </button>
-                    </p>
-                  ))}
-                  {mod.activities?.map((s, i) => (
-                    <p key={i}>
-                      📝 Activity: {s.title}{" "}
-                      {s.inputType === "file" && s.file && <span>📎 {s.file.name}</span>}
-                      {s.inputType === "text" && s.content && <span> — {s.content}</span>}
-                      <button
-                        style={{
-                          background: "red",
-                          color: "#fff",
-                          border: "none",
-                          padding: "4px 8px",
-                          borderRadius: "6px",
-                          marginLeft: "10px",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => {
-                          if (window.confirm("Delete this activity?")) {
-                            const updatedLessons = lessons.map((l) =>
-                              l.id === lesson.id
-                                ? {
-                                    ...l,
-                                    modules: l.modules.map((m) =>
-                                      m.id === mod.id
-                                        ? {
-                                            ...m,
-                                            activities: m.activities.filter(
-                                              (_, idx) => idx !== i
-                                            ),
-                                          }
-                                        : m
-                                    ),
-                                  }
-                                : l
-                            );
-                            setLessons(updatedLessons);
-                            localStorage.setItem(
-                              "lessons",
-                              JSON.stringify(updatedLessons)
-                            );
-                          }
-                        }}
-                      >
-                        🗑️
-                      </button>
-                    </p>
-                  ))}
-                </div>
-              ))
-            ) : (
-              <p
-                style={{
-                  textAlign: "center",
-                  fontStyle: "italic",
-                  color: "#666",
-                }}
-              >
-                No modules added yet.
-              </p>
+                  <FiXCircle style={{ marginRight: "6px" }} /> Cancel Delete
+                </button>
+                <button
+                  className="btn confirm-btn"
+                  onClick={handleDelete}
+                  disabled={selectedToDelete.length === 0}
+                  style={{
+                    backgroundColor:
+                      selectedToDelete.length > 0 ? "#e63946" : "#f5a6ac",
+                    color: "white",
+                    padding: "8px 14px",
+                    border: "none",
+                    borderRadius: "8px",
+                    cursor:
+                      selectedToDelete.length > 0 ? "pointer" : "not-allowed",
+                    boxShadow:
+                      selectedToDelete.length > 0
+                        ? "0 3px 6px rgba(0,0,0,0.2)"
+                        : "none",
+                    transition: "background 0.2s ease",
+                    marginTop: "5px",
+                  }}
+                >
+                  <FiTrash2 style={{ marginRight: "6px" }} /> Confirm Delete
+                </button>
+              </>
             )}
           </div>
-        ))}
-
-        {/* Action Buttons */}
-        <div style={{ textAlign: "center", marginTop: "20px" }}>
-          <button
-            style={{
-              background: "gray",
-              color: "#fff",
-              border: "none",
-              padding: "10px 20px",
-              borderRadius: "6px",
-              marginRight: "12px",
-              cursor: "pointer",
-            }}
-            onClick={handleCancel}
-          >
-            Cancel
-          </button>
-          <button
-            style={{
-              background: "green",
-              color: "#fff",
-              border: "none",
-              padding: "10px 20px",
-              borderRadius: "6px",
-              cursor: "pointer",
-            }}
-            onClick={handleSaveAndManage} // just call without argument
-          >
-            Save and Manage
-          </button>
         </div>
 
-        {/* ======= Modals ======= */}
-        {showModuleModal && (
-          <div className="modal-overlay">
-            <div className="modal">
-              <h2>Add Module</h2>
-              <input
-                type="text"
-                placeholder="Module Title"
-                value={moduleForm.moduleName}
-                onChange={(e) =>
-                  setModuleForm({ ...moduleForm, moduleName: e.target.value })
-                }
-              />
-              <label>Choose Input Type:</label>
-              <select
-                value={moduleForm.type}
-                onChange={(e) =>
-                  setModuleForm({
-                    ...moduleForm,
-                    type: e.target.value,
-                    moduleContent: "",
-                    moduleFile: null,
-                  })
-                }
-              >
-                <option value="text">Write Content</option>
-                <option value="file">Upload File</option>
-              </select>
-              {moduleForm.type === "file" ? (
+        
+        {allLessons.length > 0 ? (
+          allLessons.map((lesson) => (
+            <div key={lesson.id} className="card" style={{ marginBottom: "20px" }}>
+              {deleteMode && (
                 <input
-                  type="file"
-                  onChange={(e) =>
-                    setModuleForm({ ...moduleForm, moduleFile: e.target.files[0] })
-                  }
-                />
-              ) : (
-                <textarea
-                  placeholder="Write module content here..."
-                  value={moduleForm.moduleContent}
-                  onChange={(e) =>
-                    setModuleForm({ ...moduleForm, moduleContent: e.target.value })
-                  }
-                />
-              )}
-              <div className="modal-actions">
-                <button onClick={() => setShowModuleModal(false)}>Cancel</button>
-                <button onClick={handleModuleSave}>Save</button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {showEditLessonModal && (
-          <div className="modal-overlay">
-            <div className="modal">
-              <h2>Edit Lesson</h2>
-              <label>Lesson Name</label>
-              <input
-                type="text"
-                value={editLessonForm.lessonName}
-                onChange={(e) =>
-                  setEditLessonForm({ ...editLessonForm, lessonName: e.target.value })
-                }
-              />
-              <label>Description</label>
-              <textarea
-                value={editLessonForm.description}
-                onChange={(e) =>
-                  setEditLessonForm({ ...editLessonForm, description: e.target.value })
-                }
-              />
-              <label>Objectives</label>
-              <textarea
-                value={editLessonForm.objectives}
-                onChange={(e) =>
-                  setEditLessonForm({ ...editLessonForm, objectives: e.target.value })
-                }
-              />
-              <div className="modal-actions">
-                <button onClick={() => setShowEditLessonModal(false)}>Cancel</button>
-                <button onClick={handleLessonEditSave}>Save</button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {showSubItemModal && (
-          <div className="modal-overlay">
-            <div className="modal">
-              <h2>Add {subItemForm.type === "lesson" ? "Lesson" : "Activity"}</h2>
-              <input
-                type="text"
-                placeholder="Title"
-                value={subItemForm.title}
-                onChange={(e) =>
-                  setSubItemForm({ ...subItemForm, title: e.target.value })
-                }
-              />
-
-              <label>Choose Input Type:</label>
-              <select
-                value={subItemForm.inputType}
-                onChange={(e) =>
-                  setSubItemForm({
-                    ...subItemForm,
-                    inputType: e.target.value,
-                    content: "",
-                    file: null,
-                  })
-                }
-              >
-                <option value="text">Write Content</option>
-                <option value="file">Upload File</option>
-              </select>
-
-              {subItemForm.inputType === "file" ? (
-                <input
-                  type="file"
-                  onChange={(e) =>
-                    setSubItemForm({ ...subItemForm, file: e.target.files[0] })
-                  }
-                />
-              ) : (
-                <textarea
-                  placeholder="Write content here..."
-                  value={subItemForm.content}
-                  onChange={(e) =>
-                    setSubItemForm({ ...subItemForm, content: e.target.value })
-                  }
+                  type="checkbox"
+                  checked={selectedToDelete.includes(lesson.id)}
+                  onChange={() => handleCheckboxChange(lesson.id)}
+                  style={{
+                    marginRight: "15px",
+                    marginTop: "10px",
+                    transform: "scale(1.3)",
+                    cursor: "pointer",
+                  }}
                 />
               )}
 
-              <div className="modal-actions">
-                <button onClick={() => setShowSubItemModal(false)}>Cancel</button>
-                <button onClick={handleSubItemSave}>Save</button>
+              <div style={{ flex: 1 }}>
+                <h2>{lesson.lessonName}</h2>
+                <p>{lesson.description}</p>
+                <p>
+                  <strong>Objectives:</strong> {lesson.objectives}
+                </p>
+
+                
+                <div className="section-card">
+                  <div
+                    className="section-header"
+                    onClick={() => toggleExpand(lesson.id, "lessons")}
+                    style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+                  >
+                    {expanded[`${lesson.id}-lessons`] ? <FiChevronDown /> : <FiChevronRight />}
+                    <h3 style={{ marginLeft: "8px" }}>📘 Lessons</h3>
+                  </div>
+                  {expanded[`${lesson.id}-lessons`] && (
+                    <DragDropContext
+                      onDragEnd={(result) => handleDragEnd(result, lesson.id, "lessons")}
+                    >
+                      <Droppable droppableId={`lessons-${lesson.id}`}>
+                        {(provided) => (
+                          <div ref={provided.innerRef} {...provided.droppableProps}>
+                            {lesson.lessons?.map((sub, i) => (
+                              <Draggable key={sub.id} draggableId={String(sub.id)} index={i}>
+                                {(provided) => (
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    className="sub-card clickable"
+                                    onClick={() =>
+                                      navigate(`/admin/lessons/${lesson.id}/sub/${sub.id}`, {
+                                        state: { sub },
+                                      })
+                                    }
+                                  >
+                                    <strong>{sub.title}</strong>
+                                    <p>{sub.instruction}</p>
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                          </div>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
+                  )}
+                </div>
+
+                
+                <div className="section-card">
+                  <div
+                    className="section-header"
+                    onClick={() => toggleExpand(lesson.id, "activities")}
+                    style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+                  >
+                    {expanded[`${lesson.id}-activities`] ? <FiChevronDown /> : <FiChevronRight />}
+                    <h3 style={{ marginLeft: "8px" }}>🎯 Activities</h3>
+                  </div>
+                  {expanded[`${lesson.id}-activities`] && (
+                    <DragDropContext
+                      onDragEnd={(result) => handleDragEnd(result, lesson.id, "activities")}
+                    >
+                      <Droppable droppableId={`activities-${lesson.id}`}>
+                        {(provided) => (
+                          <div ref={provided.innerRef} {...provided.droppableProps}>
+                            {lesson.activities?.map((act, i) => (
+                              <Draggable key={act.id} draggableId={String(act.id)} index={i}>
+                                {(provided) => (
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    className="sub-card"
+                                  >
+                                    <strong>{act.title}</strong>
+                                    <p>{act.instruction}</p>
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                          </div>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
+                  )}
+                </div>
+
+                
+                <div className="section-card">
+                  <div
+                    className="section-header"
+                    onClick={() => toggleExpand(lesson.id, "modules")}
+                    style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+                  >
+                    {expanded[`${lesson.id}-modules`] ? <FiChevronDown /> : <FiChevronRight />}
+                    <h3 style={{ marginLeft: "8px" }}>📂 Modules</h3>
+                  </div>
+                  {expanded[`${lesson.id}-modules`] && (
+                    <DragDropContext
+                      onDragEnd={(result) => handleDragEnd(result, lesson.id, "modules")}
+                    >
+                      <Droppable droppableId={`modules-${lesson.id}`}>
+                        {(provided) => (
+                          <div ref={provided.innerRef} {...provided.droppableProps}>
+                            {lesson.modules?.map((mod, i) => (
+                              <Draggable key={mod.id} draggableId={String(mod.id)} index={i}>
+                                {(provided) => (
+                                  <div
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    className="sub-card"
+                                  >
+                                    <strong>{mod.title}</strong>
+                                    <p>{mod.instruction}</p>
+                                  </div>
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                          </div>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          ))
+        ) : (
+          <p>No lessons available. Please create one.</p>
         )}
       </main>
     </div>

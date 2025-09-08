@@ -14,13 +14,14 @@ import ForgotPassword from "./page/authentication/ForgotPassword";
 import ResetPassword from "./page/authentication/ResetPassword";
 
 import UserDashboard from "./page/user/Dashboard";
+import ProfilePage from "./page/admin/ProfilePage"; 
 import UserList from "./page/admin/UserList";
 import AdminDashboard from "./page/admin/Dashboard"; 
 import Profile from "./page/user/Profile";
 import ManageLesson from "./page/admin/ManageLesson";
 import CreateLesson from "./page/admin/CreateLesson";
 import ManageSingleLesson from "./page/admin/ManageSingleLesson";
-import LessonsPage from "./page/admin/LessonsPage"; // ✅ add this
+import LessonsPage from "./page/admin/LessonsPage"; 
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthContext } from "./context/AuthContext";
@@ -46,17 +47,16 @@ function App() {
       <Navbar logout={logout} />
 
       <Routes>
-        {/* Default redirect */}
+       
         <Route path="/" element={<Navigate to="/login" />} />
 
-        {/* Auth routes */}
+        
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/try" element={<Try />} />
 
-        {/* User routes */}
         <Route
           path="/user/dashboard"
           element={
@@ -74,7 +74,7 @@ function App() {
           }
         />
 
-        {/* Admin routes */}
+       
         <Route
           path="/admin/dashboard"
           element={
@@ -92,8 +92,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/admin/profile"
+  element={
+    <ProtectedRoute allowedRoles={["admin"]}>
+      <ProfilePage />   
+    </ProtectedRoute>
+  }
+/>
 
-        {/* ✅ Main Lessons Management Page */}
+       
         <Route
           path="/admin/lessons"
           element={
@@ -103,7 +111,7 @@ function App() {
           }
         />
 
-        {/* ✅ LessonsPage (separate from ManageLesson) */}
+        
         <Route
           path="/admin/lessons/page"
           element={

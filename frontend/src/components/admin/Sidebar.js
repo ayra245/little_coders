@@ -1,12 +1,13 @@
-// src/components/admin/Sidebar.js
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FiLogOut } from "react-icons/fi";
-import '../../page/admin/Lessons.css';
+import { FiLogOut, FiHome, FiUsers, FiBook } from "react-icons/fi";
+import { AuthContext } from "../../context/AuthContext";
+import "../../page/admin/Lessons.css";
 
 function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useContext(AuthContext);
 
   const isActive = (path) => location.pathname.startsWith(path);
 
@@ -15,7 +16,10 @@ function Sidebar() {
       {/* Sidebar Header */}
       <div className="sidebar-header">
         <div className="avatar logo">
-          <img src="/assets/images/logo192.png" alt="Logo" />
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+            alt="Logo"
+          />
         </div>
         <div className="brand">Little Coders</div>
       </div>
@@ -30,7 +34,7 @@ function Sidebar() {
               className={`nav-btn ${isActive("/admin/dashboard") ? "active" : ""}`}
               onClick={() => navigate("/admin/dashboard")}
             >
-              Dashboard
+              <FiHome className="icon" /> Dashboard
             </button>
           </li>
           <li>
@@ -38,7 +42,7 @@ function Sidebar() {
               className={`nav-btn ${isActive("/admin/users") ? "active" : ""}`}
               onClick={() => navigate("/admin/users")}
             >
-              Users
+              <FiUsers className="icon" /> Users
             </button>
           </li>
           <li>
@@ -46,7 +50,7 @@ function Sidebar() {
               className={`nav-btn ${isActive("/admin/lessons") ? "active" : ""}`}
               onClick={() => navigate("/admin/lessons")}
             >
-              Lessons
+              <FiBook className="icon" /> Lessons
             </button>
           </li>
         </ul>
@@ -55,20 +59,28 @@ function Sidebar() {
       <hr className="divider" />
 
       {/* Sidebar Footer */}
-      <div className="sidebar-footer">
+      <div
+        className="sidebar-footer"
+        onClick={() => navigate("/admin/profile")}
+        style={{ cursor: "pointer" }}
+      >
         <div className="avatar small">
-          <img src="/assets/images/profile.png" alt="Profile" />
+          <img src={user?.image || "/assets/images/profile.png"} alt="Profile" />
         </div>
         <div className="user-info">
-          <span className="username">Admin Name</span>
-          <span className="role">Admin</span>
+          <span className="username">{user?.name || "Admin"}</span>
+          <span className="role">{user?.role || "Administrator"}</span>
         </div>
         <button
           className="logout-btn"
           title="Logout"
-          onClick={() => alert("Logging out...")}
+          onClick={(e) => {
+            e.stopPropagation();
+            alert("Logging out...");
+            navigate("/login");
+          }}
         >
-          <FiLogOut size={26} />
+          <FiLogOut size={24} />
         </button>
       </div>
     </aside>
