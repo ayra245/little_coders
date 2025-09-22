@@ -12,7 +12,7 @@ import {
   FiChevronRight,
 } from "react-icons/fi";
 
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 function ManageSingleLesson() {
   const navigate = useNavigate();

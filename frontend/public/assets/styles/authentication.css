@@ -99,3 +99,15 @@ html, body {
   font-size: 10px; 
   color: #2e7d32; 
 }
+.auth-form input,
+.auth-form select {
+  width: 100%;
+  padding: 12px 8px;
+  margin-bottom: 16px;
+  border: none;
+  border-bottom: 3px solid #2e7d32;
+  background: transparent;
+  outline: none;
+  font-size: 12px;
+  font-family: "Press Start 2P", cursive;
+}

@@ -14,14 +14,15 @@ import ForgotPassword from "./page/authentication/ForgotPassword";
 import ResetPassword from "./page/authentication/ResetPassword";
 
 import UserDashboard from "./page/user/Dashboard";
-import ProfilePage from "./page/admin/ProfilePage"; 
+import ProfilePage from "./page/admin/ProfilePage";
 import UserList from "./page/admin/UserList";
-import AdminDashboard from "./page/admin/Dashboard"; 
-import Profile from "./page/user/Profile";
+import AdminDashboard from "./page/admin/Dashboard";
+import Profile from "./page/user/Program";
 import ManageLesson from "./page/admin/ManageLesson";
 import CreateLesson from "./page/admin/CreateLesson";
 import ManageSingleLesson from "./page/admin/ManageSingleLesson";
-import LessonsPage from "./page/admin/LessonsPage"; 
+import LessonsPage from "./page/admin/LessonsPage";
+import Lessons from "./page/user/Lessons";   // ✅ Import Lessons
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthContext } from "./context/AuthContext";
@@ -47,16 +48,16 @@ function App() {
       <Navbar logout={logout} />
 
       <Routes>
-       
         <Route path="/" element={<Navigate to="/login" />} />
 
-        
+        {/* Auth routes */}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/try" element={<Try />} />
 
+        {/* User routes */}
         <Route
           path="/user/dashboard"
           element={
@@ -73,8 +74,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/user/lessons"   // ✅ NEW ROUTE
+          element={
+            <ProtectedRoute allowedRoles={["user", "admin"]}>
+              <Lessons />
+            </ProtectedRoute>
+          }
+        />
 
-       
+        {/* Admin routes */}
         <Route
           path="/admin/dashboard"
           element={
@@ -83,7 +92,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/admin/users"
           element={
@@ -93,15 +101,13 @@ function App() {
           }
         />
         <Route
-  path="/admin/profile"
-  element={
-    <ProtectedRoute allowedRoles={["admin"]}>
-      <ProfilePage />   
-    </ProtectedRoute>
-  }
-/>
-
-       
+          path="/admin/profile"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin/lessons"
           element={
@@ -110,8 +116,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
-        
         <Route
           path="/admin/lessons/page"
           element={
@@ -120,7 +124,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/admin/lessons/create"
           element={

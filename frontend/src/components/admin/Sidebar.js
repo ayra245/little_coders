@@ -13,7 +13,6 @@ function Sidebar() {
 
   return (
     <aside className="sidebar">
-      {/* Sidebar Header */}
       <div className="sidebar-header">
         <div className="avatar logo">
           <img
@@ -26,7 +25,6 @@ function Sidebar() {
 
       <hr className="divider" />
 
-      {/* Navigation */}
       <nav>
         <ul>
           <li>
@@ -58,7 +56,6 @@ function Sidebar() {
 
       <hr className="divider" />
 
-      {/* Sidebar Footer */}
       <div
         className="sidebar-footer"
         onClick={() => navigate("/admin/profile")}
